@@ -23,7 +23,9 @@ export type GameEvent =
   | { kind: 'playCard'; player: PlayerRef; card: CardRef; cost?: number; destination?: string; from: 'hand' | 'display' }
   | { kind: 'takeDisplay'; player: PlayerRef; card: CardRef }
   | { kind: 'huntReveal'; player: PlayerRef; cards: CardRef[] }
-  | { kind: 'huntKeep'; player: PlayerRef; kept: CardRef[]; discarded: CardRef[] }
+  /** 狩猎/蛙潜的保留+弃除。discardedCount:弃牌只有数量没有牌面(狩猎保留计牌变体);
+   *  fromAnonymousDraw:保留的牌来自「抽取 N 张」匿名摸牌,回放时从匿名手牌估计中剔除 */
+  | { kind: 'huntKeep'; player: PlayerRef; kept: CardRef[]; discarded: CardRef[]; discardedCount?: number; fromAnonymousDraw?: boolean }
   | { kind: 'build'; player: PlayerRef; cost: number; structure: string }
   | { kind: 'gain'; player: PlayerRef; amount?: number; source?: string }
   | { kind: 'projectSupport'; player: PlayerRef; project: string }
@@ -67,6 +69,12 @@ const P = {
   effectDiscard: /^(.+?)弃除(.+?)由于(.+?)的效果$/,
   huntReveal: /^(.+?)抓取并展示了(.+?)(?:\((狩猎效果)\))$/,
   huntKeep: /^(.+?)保留(.+?)并弃除(.+?)(?:\((狩猎效果)\))$/,
+  // 狩猎变体:保留的牌实名(来自匿名抽取),弃牌只有数量
+  huntKeepCount: /^狩猎效果:(.+?)\s*保留\s*(.+?)\s*张牌并丢弃\s*(\d+)\s*张牌$/,
+  huntDraw: /^狩猎效果:(.+?)\s*抽取\s*(\d+)\s*张卡牌$/,
+  // 蛙潜:保留的牌进手牌(来自牌库顶),弃除的牌实名
+  scubaKeep: /^蛙潜效果:(.+?)\s*保留了\s*(.+?)\s*并弃除了\s*(.+)$/,
+  mapDiscard: /^根据地图\s*\S+效果,(.+?)弃除(\d+)张卡牌$/,
   discardPurpose: /^(.+?)弃除了(.+?)以(.+?)(?:\((.+?)\))?$/,
   discardNamed: /^(.+?)弃除了(.+?)(?:\((初始卡牌选择)\))?$/,
   discardAnon: /^(.+?)弃除了(\d+)张卡牌(?:\((初始卡牌选择)\))?$/,
@@ -81,7 +89,7 @@ const P = {
   actionSelected: /^(.+?)选择强度为\s*(\d+)\s*的行动卡牌\s*(.*)$/,
   actionPlaced: /^(.+?)将行动卡\s*放置在位置(\d+)/,
   actionSet: /^(.+?)将使用以下行动卡牌:(.+)$/,
-  projectSupport: /^(.+?)支持了保护项目的第(?:一|1)格:(.+)$/,
+  projectSupport: /^(.+?)支持了保护项目的第(?:[一二三四五]|[1-5])格:(.+)$/,
   timestamp: /^\d{1,2}:\d{2}$/,
 };
 
@@ -94,6 +102,9 @@ const NOTES: RegExp[] = [
   /^(.+?)因在(.+?)上具有其玩家标记而获得\s*(\d+)$/, // 标记奖励,需在 gain 之前拦截
   /^(.+?)从展示区标记了(.+?)$/, // 标记不动牌,仅预订
   /^(.+?)支付\s*(\d+)\s*为了毒液$/,
+  /^(.+?)支付\s*(\d+)\s*为了购买赞助商牌$/,
+  /^(.+?)弃除其(.+?)指示物$/, // 毒液等指示物不是牌,不计入弃牌堆
+  /^(游戏结束|重播游戏|history)$/,
   /^(.+?)使用毒液效果并将毒液标记给予(.+)$/,
   /^(.+?)支付\s*(\d+)\s*以获得\s*(\d+)\s*\((.+?)\)$/,
   /^(.+?)\s*捐赠\s*(\d+)\s*获得奖励\s*(\d+)$/,
@@ -116,6 +127,28 @@ export function parseLogLine(rawLine: string, me?: string): GameEvent | null {
 
   let m = text.match(P.insightDiscard);
   if (m) return { kind: 'discardAnonymous', player: normPlayer(m[1], me), count: Number(m[3]), reason: '洞察力效果' };
+
+  // 蛙潜/狩猎保留计牌变体必须在 huntKeep / discardNamed 之前,否则会被吞成误归属
+  m = text.match(P.scubaKeep);
+  if (m) return { kind: 'huntKeep', player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])) };
+
+  m = text.match(P.huntKeepCount);
+  if (m) {
+    return {
+      kind: 'huntKeep',
+      player: normPlayer(m[1], me),
+      kept: resolveCards(splitNames(m[2])),
+      discarded: [],
+      discardedCount: Number(m[3]),
+      fromAnonymousDraw: true,
+    };
+  }
+
+  m = text.match(P.huntDraw);
+  if (m) return { kind: 'drawAnonymous', player: normPlayer(m[1], me), count: Number(m[2]), deck: 'main' };
+
+  m = text.match(P.mapDiscard);
+  if (m) return { kind: 'discardAnonymous', player: normPlayer(m[1], me), count: Number(m[2]), reason: '地图效果' };
 
   m = text.match(P.huntKeep);
   if (m) return { kind: 'huntKeep', player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])) };
@@ -223,6 +256,8 @@ export function replayEvents(events: GameEvent[]): ReplayState {
   const hiddenCount = new Map<string, number>();
   const drawn: Record<string, number> = {};
   const discardedAnon: Record<string, number> = {};
+  /** 匿名抽取后身份转为已知的牌数(狩猎保留计牌变体):结算时从匿名摸牌中剔除,保持顺序无关 */
+  const knownFromAnonDraw: Record<string, number> = {};
   const unresolved = new Set<string>();
   let discardPileCount = 0;
 
@@ -291,7 +326,13 @@ export function replayEvents(events: GameEvent[]): ReplayState {
         const disc = idsOf(e.discarded);
         kept.forEach((id) => bump(e.player === 'me' ? myHandCount : hiddenCount, id, 1));
         disc.forEach((id) => consumed.add(id));
-        discardPileCount += e.discarded.length;
+        discardPileCount += e.discarded.length + (e.discardedCount ?? 0);
+        if (e.discardedCount) {
+          discardedAnon[e.player] = (discardedAnon[e.player] ?? 0) + e.discardedCount;
+        }
+        if (e.fromAnonymousDraw) {
+          knownFromAnonDraw[e.player] = (knownFromAnonDraw[e.player] ?? 0) + kept.length;
+        }
         break;
       }
     }
@@ -300,11 +341,17 @@ export function replayEvents(events: GameEvent[]): ReplayState {
   const positive = (map: Map<string, number>): string[] =>
     [...map.entries()].filter(([, n]) => n > 0).map(([id]) => id);
 
+  // 匿名摸牌剔除「抽取后身份已知」的部分(狩猎保留的牌进了已知隐藏区,不再占匿名手牌估计)
+  const adjustedDrawn: Record<string, number> = {};
+  for (const [p, n] of Object.entries(drawn)) {
+    adjustedDrawn[p] = Math.max(0, n - (knownFromAnonDraw[p] ?? 0));
+  }
+
   return {
     consumedCardIds: [...consumed],
     myHandCardIds: positive(myHandCount),
     knownHiddenCardIds: positive(hiddenCount),
-    anonymous: { drawn, discarded: discardedAnon },
+    anonymous: { drawn: adjustedDrawn, discarded: discardedAnon },
     discardPileCount,
     unresolvedNames: [...unresolved],
   };

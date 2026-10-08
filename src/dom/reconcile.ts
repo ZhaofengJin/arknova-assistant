@@ -121,19 +121,22 @@ export function reconcile(snap: DomSnapshot, exp: ReconcileExpected): ReconcileI
     }
   }
 
-  // 2. 牌库计数对账:页面计数器是权威值
+  // 2/3. 计数对账:页面计数器是权威值。
+  // 日志窗口不完整时(开局前的摸牌/弃牌缺失)计数推算必然偏差,硬告警会变误报 → 合并为一条提示
+  const logIncomplete = exp.displayBlindSpot > 0;
+  const countMismatches: string[] = [];
   if (snap.deckCount !== null && snap.deckCount !== exp.deckEstimate) {
-    issues.push({
-      area: 'deck',
-      message: `牌库计数不一致:页面 ${snap.deckCount} / 日志推算 ${exp.deckEstimate}(可能漏了摸牌或弃牌事件)`,
-    });
+    countMismatches.push(`牌库:页面 ${snap.deckCount} / 日志推算 ${exp.deckEstimate}`);
   }
-
-  // 3. 弃牌堆计数对账
   if (snap.discardCount !== null && snap.discardCount !== exp.discardEstimate) {
+    countMismatches.push(`弃牌堆:页面 ${snap.discardCount} / 日志推算 ${exp.discardEstimate}`);
+  }
+  if (countMismatches.length > 0) {
     issues.push({
-      area: 'discard',
-      message: `弃牌堆计数不一致:页面 ${snap.discardCount} / 日志推算 ${exp.discardEstimate}`,
+      area: logIncomplete ? 'layout' : 'deck',
+      message: logIncomplete
+        ? `日志窗口不完整,计数对账仅供参考:${countMismatches.join(';')}`
+        : `计数不一致:${countMismatches.join(';')}(可能漏了摸牌或弃牌事件)`,
     });
   }
 

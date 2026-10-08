@@ -142,7 +142,20 @@ describe('reconcile', () => {
       fakeDom({ displayCards: [el({ 'data-id': 'A401_Cheetah' })], deck: '100', discard: '20' }),
     );
     const issues = reconcile(snap, baseExpected);
-    expect(issues.some((i) => i.area === 'discard')).toBe(true);
+    expect(issues.some((i) => i.message.includes('弃牌堆') && i.message.includes('20'))).toBe(true);
+  });
+
+  it('日志窗口不完整时计数不一致 → 降级为一条提示而非硬告警', () => {
+    const snap = readDomSnapshot(
+      fakeDom({ displayCards: [el({ 'data-id': 'A401_Cheetah' })], deck: '97', discard: '20' }),
+    );
+    const issues = reconcile(snap, { ...baseExpected, displayBlindSpot: 3 });
+    const countIssues = issues.filter((i) => i.message.includes('计数'));
+    expect(countIssues).toHaveLength(1);
+    expect(countIssues[0].area).toBe('layout');
+    expect(countIssues[0].message).toContain('日志窗口不完整');
+    expect(countIssues[0].message).toContain('牌库');
+    expect(countIssues[0].message).toContain('弃牌堆');
   });
 
   it('计数器读不到时不告警(页面区域可能尚未渲染)', () => {

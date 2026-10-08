@@ -44,7 +44,7 @@ describe('记牌核心', () => {
 
   it('空状态:对手无牌时一切必在牌库', () => {
     const empty = computeTracker(
-      { consumedCardIds: [], myHandCardIds: [], knownHiddenCardIds: [], anonymous: { drawn: {}, discarded: {} }, unresolvedNames: [] },
+      { consumedCardIds: [], myHandCardIds: [], knownHiddenCardIds: [], anonymous: { drawn: {}, discarded: {} }, discardPileCount: 0, unresolvedNames: [] },
       'mw',
     );
     expect(empty.unknownTotal).toBe(pool.length);
