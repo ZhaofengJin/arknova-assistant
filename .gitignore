@@ -1,0 +1,11 @@
+node_modules/
+.DS_Store
+
+# 个人样本与抓取的页面数据(不入库)
+samples/
+research/
+*-files/
+*_files/
+*.local
+
+# 构建产物 dist/ 需要入库:Tampermonkey 通过 raw URL 自动更新

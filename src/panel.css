@@ -1,0 +1,131 @@
+#arknova-assistant-panel {
+  position: fixed;
+  z-index: 99999;
+  width: 320px;
+  background: #1e2126;
+  color: #e8e8e8;
+  border: 1px solid #3a3f47;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  font: 13px/1.5 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  user-select: none;
+}
+
+#arknova-assistant-panel .ana-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: #2a2e35;
+  border-radius: 8px 8px 0 0;
+  cursor: move;
+  font-weight: 600;
+}
+
+#arknova-assistant-panel .ana-toggle {
+  background: none;
+  border: 1px solid #555c66;
+  border-radius: 4px;
+  color: #cfd3da;
+  cursor: pointer;
+  padding: 1px 8px;
+  font-size: 12px;
+}
+
+#arknova-assistant-panel .ana-toggle:hover {
+  background: #3a3f47;
+}
+
+#arknova-assistant-panel .ana-body {
+  padding: 10px;
+  max-height: 60vh;
+  overflow-y: auto;
+  user-select: text;
+}
+
+#arknova-assistant-panel .ana-summary {
+  margin-bottom: 4px;
+}
+
+#arknova-assistant-panel .ana-types {
+  color: #9aa2ad;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+#arknova-assistant-panel .ana-section {
+  font-weight: 600;
+  margin: 6px 0 4px;
+}
+
+#arknova-assistant-panel .ana-top {
+  margin: 0;
+  padding-left: 4px;
+  list-style: none;
+}
+
+#arknova-assistant-panel .ana-top li {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  padding: 1px 0;
+}
+
+#arknova-assistant-panel .ana-rank {
+  color: #9aa2ad;
+  min-width: 18px;
+}
+
+#arknova-assistant-panel .ana-en {
+  color: #7d8590;
+  font-size: 11px;
+}
+
+#arknova-assistant-panel .ana-pct {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: #7ee787;
+}
+
+#arknova-assistant-panel .ana-warn {
+  color: #f0a35e;
+  margin-top: 6px;
+}
+
+#arknova-assistant-panel .ana-advice b {
+  color: #7ee787;
+}
+
+#arknova-assistant-panel .ana-reason {
+  color: #9aa2ad;
+  font-size: 11px;
+  padding-left: 24px;
+  line-height: 1.4;
+}
+
+#arknova-assistant-panel .ana-partial {
+  font-size: 10px;
+}
+
+#arknova-assistant-panel .ana-weights {
+  margin-top: 10px;
+  border-top: 1px solid #3a3f47;
+  padding-top: 6px;
+  font-size: 12px;
+  color: #9aa2ad;
+}
+
+#arknova-assistant-panel .ana-weights summary {
+  cursor: pointer;
+}
+
+#arknova-assistant-panel .ana-weight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+#arknova-assistant-panel .ana-weight input {
+  flex: 1;
+}
