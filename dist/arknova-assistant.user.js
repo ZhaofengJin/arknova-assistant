@@ -2,13 +2,15 @@
 // @name         ArkNova Assistant
 // @version      0.1.0
 // @description  BGA 方舟动物园记牌与打法建议助手(个人学习参考用)
+// @downloadURL  https://raw.githubusercontent.com/GITHUB_OWNER/arknova-assistant/main/dist/arknova-assistant.user.js
+// @updateURL    https://raw.githubusercontent.com/GITHUB_OWNER/arknova-assistant/main/dist/arknova-assistant.user.js
 // @match        https://boardgamearena.com/*/arknova*
 // @match        https://boardgamearena.com/tableview*
 // @grant        GM_addStyle
 // @run-at       document-idle
 // ==/UserScript==
 
-(a=>{if(typeof GM_addStyle=="function"){GM_addStyle(a);return}const n=document.createElement("style");n.textContent=a,document.head.append(n)})(" #arknova-assistant-panel{position:fixed;z-index:99999;width:320px;background:#1e2126;color:#e8e8e8;border:1px solid #3a3f47;border-radius:8px;box-shadow:0 4px 16px #0006;font:13px/1.5 -apple-system,PingFang SC,Microsoft YaHei,sans-serif;-webkit-user-select:none;user-select:none}#arknova-assistant-panel .ana-header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#2a2e35;border-radius:8px 8px 0 0;cursor:move;font-weight:600}#arknova-assistant-panel .ana-toggle{background:none;border:1px solid #555c66;border-radius:4px;color:#cfd3da;cursor:pointer;padding:1px 8px;font-size:12px}#arknova-assistant-panel .ana-toggle:hover{background:#3a3f47}#arknova-assistant-panel .ana-body{padding:10px;max-height:60vh;overflow-y:auto;-webkit-user-select:text;user-select:text}#arknova-assistant-panel .ana-summary{margin-bottom:4px}#arknova-assistant-panel .ana-types{color:#9aa2ad;font-size:12px;margin-bottom:8px}#arknova-assistant-panel .ana-section{font-weight:600;margin:6px 0 4px}#arknova-assistant-panel .ana-top{margin:0;padding-left:4px;list-style:none}#arknova-assistant-panel .ana-top li{display:flex;gap:6px;align-items:baseline;padding:1px 0}#arknova-assistant-panel .ana-rank{color:#9aa2ad;min-width:18px}#arknova-assistant-panel .ana-en{color:#7d8590;font-size:11px}#arknova-assistant-panel .ana-pct{margin-left:auto;font-variant-numeric:tabular-nums;color:#7ee787}#arknova-assistant-panel .ana-warn{color:#f0a35e;margin-top:6px}#arknova-assistant-panel .ana-advice b{color:#7ee787}#arknova-assistant-panel .ana-reason{color:#9aa2ad;font-size:11px;padding-left:24px;line-height:1.4}#arknova-assistant-panel .ana-partial{font-size:10px}#arknova-assistant-panel .ana-weights{margin-top:10px;border-top:1px solid #3a3f47;padding-top:6px;font-size:12px;color:#9aa2ad}#arknova-assistant-panel .ana-weights summary{cursor:pointer}#arknova-assistant-panel .ana-weight{display:flex;align-items:center;gap:6px;margin-top:4px}#arknova-assistant-panel .ana-weight input{flex:1} ");
+(a=>{if(typeof GM_addStyle=="function"){GM_addStyle(a);return}const n=document.createElement("style");n.textContent=a,document.head.append(n)})(" #arknova-assistant-panel{position:fixed;z-index:99999;width:320px;background:#1e2126;color:#e8e8e8;border:1px solid #3a3f47;border-radius:8px;box-shadow:0 4px 16px #0006;font:13px/1.5 -apple-system,PingFang SC,Microsoft YaHei,sans-serif;-webkit-user-select:none;user-select:none}#arknova-assistant-panel .ana-header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#2a2e35;border-radius:8px 8px 0 0;cursor:move;font-weight:600}#arknova-assistant-panel .ana-toggle{background:none;border:1px solid #555c66;border-radius:4px;color:#cfd3da;cursor:pointer;padding:1px 8px;font-size:12px}#arknova-assistant-panel .ana-toggle:hover{background:#3a3f47}#arknova-assistant-panel .ana-body{padding:10px;max-height:60vh;overflow-y:auto;-webkit-user-select:text;user-select:text}#arknova-assistant-panel .ana-summary{margin-bottom:4px}#arknova-assistant-panel .ana-types{color:#9aa2ad;font-size:12px;margin-bottom:8px}#arknova-assistant-panel .ana-section{font-weight:600;margin:6px 0 4px}#arknova-assistant-panel .ana-top{margin:0;padding-left:4px;list-style:none}#arknova-assistant-panel .ana-top li{display:flex;gap:6px;align-items:baseline;padding:1px 0}#arknova-assistant-panel .ana-rank{color:#9aa2ad;min-width:18px}#arknova-assistant-panel .ana-en{color:#7d8590;font-size:11px}#arknova-assistant-panel .ana-pct{margin-left:auto;font-variant-numeric:tabular-nums;color:#7ee787}#arknova-assistant-panel .ana-warn{color:#f0a35e;margin-top:6px}#arknova-assistant-panel .ana-alert-title{color:#f0a35e}#arknova-assistant-panel .ana-issues{margin:4px 0 8px;padding:6px 8px 6px 22px;border:1px solid #f0a35e55;border-radius:6px;background:#f0a35e14;color:#f0c08a;font-size:11px;line-height:1.5}#arknova-assistant-panel .ana-advice b{color:#7ee787}#arknova-assistant-panel .ana-reason{color:#9aa2ad;font-size:11px;padding-left:24px;line-height:1.4}#arknova-assistant-panel .ana-partial{font-size:10px}#arknova-assistant-panel .ana-weights{margin-top:10px;border-top:1px solid #3a3f47;padding-top:6px;font-size:12px;color:#9aa2ad}#arknova-assistant-panel .ana-weights summary{cursor:pointer}#arknova-assistant-panel .ana-weight{display:flex;align-items:center;gap:6px;margin-top:4px}#arknova-assistant-panel .ana-weight input{flex:1} ");
 
 (function () {
   'use strict';
@@ -174,6 +176,87 @@
       displayUnknownRemovals
     };
   }
+  const SELECTORS = {
+    displayContainer: "#cards-pool",
+    cardNode: ".ark-card.zoo-card",
+    deckCounter: "#deck-counter",
+    discardCounter: "#discard-counter"
+  };
+  function readDisplayIds(root) {
+    if (!root.querySelector(SELECTORS.displayContainer)) return null;
+    const nodes = root.querySelectorAll(`${SELECTORS.displayContainer} ${SELECTORS.cardNode}`);
+    const ids = [];
+    for (let i = 0; i < nodes.length; i++) {
+      const el = nodes[i];
+      const dataId = el.getAttribute("data-id");
+      if (dataId) {
+        ids.push(dataId);
+        continue;
+      }
+      const m = /^card-(.+)$/.exec(el.id ?? "");
+      if (m) ids.push(m[1]);
+    }
+    return ids;
+  }
+  function readCounter(root, selector) {
+    const el = root.querySelector(selector);
+    if (!el) return null;
+    const m = /\d+/.exec(el.textContent ?? "");
+    return m ? Number(m[0]) : null;
+  }
+  function readDomSnapshot(root) {
+    return {
+      displayIds: readDisplayIds(root),
+      deckCount: readCounter(root, SELECTORS.deckCounter),
+      discardCount: readCounter(root, SELECTORS.discardCounter)
+    };
+  }
+  function namesOf(ids) {
+    return ids.map((id) => {
+      var _a;
+      return ((_a = cardById(id)) == null ? void 0 : _a.nameZh) ?? id;
+    }).join("、");
+  }
+  function reconcile(snap, exp) {
+    const issues = [];
+    if (snap.displayIds === null) {
+      issues.push({
+        area: "layout",
+        message: `未找到展示区容器 ${SELECTORS.displayContainer}(BGA 可能已改版,对账暂停)`
+      });
+    } else {
+      const dom = new Set(snap.displayIds);
+      const log = new Set(exp.displayIds);
+      const onlyInLog = [...log].filter((id) => !dom.has(id));
+      const onlyInDom = [...dom].filter((id) => !log.has(id));
+      if (onlyInLog.length > 0) {
+        issues.push({
+          area: "display",
+          message: `日志推算有但页面没有:${namesOf(onlyInLog)}(可能漏了解析移除事件)`
+        });
+      }
+      if (onlyInDom.length > 0) {
+        const prefix = exp.displayBlindSpot > 0 ? "日志窗口不完整,以页面为准:" : "页面有但日志推算没有:";
+        issues.push({
+          area: "display",
+          message: `${prefix}${namesOf(onlyInDom)}`
+        });
+      }
+    }
+    if (snap.deckCount !== null && snap.deckCount !== exp.deckEstimate) {
+      issues.push({
+        area: "deck",
+        message: `牌库计数不一致:页面 ${snap.deckCount} / 日志推算 ${exp.deckEstimate}(可能漏了摸牌或弃牌事件)`
+      });
+    }
+    if (snap.discardCount !== null && snap.discardCount !== exp.discardEstimate) {
+      issues.push({
+        area: "discard",
+        message: `弃牌堆计数不一致:页面 ${snap.discardCount} / 日志推算 ${exp.discardEstimate}`
+      });
+    }
+    return issues;
+  }
   function normalizePunctuation(text) {
     const map = { "，": ",", "：": ":", "（": "(", "）": ")" };
     return text.replace(/[，：（）]/g, (ch) => map[ch] ?? ch);
@@ -305,6 +388,7 @@
     const drawn = {};
     const discardedAnon = {};
     const unresolved = /* @__PURE__ */ new Set();
+    let discardPileCount = 0;
     const bump = (map, id, delta) => {
       map.set(id, (map.get(id) ?? 0) + delta);
     };
@@ -327,6 +411,7 @@
           break;
         case "discard": {
           const ids = idsOf(e.cards);
+          discardPileCount += e.cards.length;
           ids.forEach((id) => {
             consumed.add(id);
             if (e.player === "me") bump(myHandCount, id, -1);
@@ -336,12 +421,14 @@
         }
         case "discardAnonymous":
           discardedAnon[e.player] = (discardedAnon[e.player] ?? 0) + e.count;
+          discardPileCount += e.count;
           break;
         case "displayRefill":
           idsOf(e.cards).forEach((id) => consumed.add(id));
           break;
         case "displayRemove":
           idsOf(e.cards).forEach((id) => consumed.add(id));
+          discardPileCount += e.cards.length;
           break;
         case "playCard": {
           const id = idsOf([e.card])[0];
@@ -365,6 +452,7 @@
           const disc = idsOf(e.discarded);
           kept.forEach((id) => bump(e.player === "me" ? myHandCount : hiddenCount, id, 1));
           disc.forEach((id) => consumed.add(id));
+          discardPileCount += e.discarded.length;
           break;
         }
       }
@@ -375,6 +463,7 @@
       myHandCardIds: positive(myHandCount),
       knownHiddenCardIds: positive(hiddenCount),
       anonymous: { drawn, discarded: discardedAnon },
+      discardPileCount,
       unresolvedNames: [...unresolved]
     };
   }
@@ -544,6 +633,11 @@ ${warnings}`;
     return s.replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
   }
   const MEDALS = ["🥇", "🥈", "🥉"];
+  function renderIssues(issues) {
+    if (issues.length === 0) return "";
+    const rows = issues.map((i) => `<li>${esc(i.message)}</li>`).join("");
+    return `<div class="ana-section ana-alert-title">⚠️ 对账告警</div><ul class="ana-issues">${rows}</ul>`;
+  }
   function renderAdvice(advice) {
     const rows = advice.map((a, i) => `
     <li>
@@ -574,6 +668,7 @@ ${warnings}`;
   }
   function renderPanel(data) {
     return [
+      renderIssues(data.issues),
       renderAdvice(data.advice),
       renderScored("手牌评分", data.handScored, 5),
       renderScored("展示区评分", data.displayScored, 5),
@@ -617,12 +712,20 @@ ${warnings}`;
       const events = readEvents(logRoot, myName);
       const replay = replayEvents(events);
       const gs = deriveGameState(events, replay);
+      const tracker = computeTracker(replay, "mw");
+      const issues = reconcile(readDomSnapshot(document), {
+        displayIds: gs.displayCards.map((c) => c.id),
+        deckEstimate: tracker.deckEstimate,
+        discardEstimate: replay.discardPileCount,
+        displayBlindSpot: gs.displayUnknownRemovals
+      });
       panel.update(renderPanel({
         advice: advise(gs, weights),
         handScored: scoreCards(gs.myHand, gs, weights),
         displayScored: scoreCards(gs.displayCards, gs, weights),
-        tracker: computeTracker(replay, "mw"),
-        weights
+        tracker,
+        weights,
+        issues
       }));
     };
     panel.body.addEventListener("input", (ev) => {

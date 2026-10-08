@@ -210,6 +210,8 @@ export interface ReplayState {
   knownHiddenCardIds: string[];
   /** 身份未知的移动计数(对手摸牌/弃牌只有数量) */
   anonymous: { drawn: Record<string, number>; discarded: Record<string, number> };
+  /** 弃牌堆总牌数推算(所有玩家的弃牌 + 展示区弃牌 + 狩猎弃牌) */
+  discardPileCount: number;
   /** 未解析的卡名(需要人工跟进) */
   unresolvedNames: string[];
 }
@@ -222,6 +224,7 @@ export function replayEvents(events: GameEvent[]): ReplayState {
   const drawn: Record<string, number> = {};
   const discardedAnon: Record<string, number> = {};
   const unresolved = new Set<string>();
+  let discardPileCount = 0;
 
   const bump = (map: Map<string, number>, id: string, delta: number): void => {
     map.set(id, (map.get(id) ?? 0) + delta);
@@ -247,6 +250,7 @@ export function replayEvents(events: GameEvent[]): ReplayState {
         break;
       case 'discard': {
         const ids = idsOf(e.cards);
+        discardPileCount += e.cards.length;
         ids.forEach((id) => {
           consumed.add(id);
           if (e.player === 'me') bump(myHandCount, id, -1);
@@ -256,12 +260,14 @@ export function replayEvents(events: GameEvent[]): ReplayState {
       }
       case 'discardAnonymous':
         discardedAnon[e.player] = (discardedAnon[e.player] ?? 0) + e.count;
+        discardPileCount += e.count;
         break;
       case 'displayRefill':
         idsOf(e.cards).forEach((id) => consumed.add(id));
         break;
       case 'displayRemove':
         idsOf(e.cards).forEach((id) => consumed.add(id)); // 已在 refill 时计入,幂等
+        discardPileCount += e.cards.length; // 展示区弃牌进弃牌堆
         break;
       case 'playCard': {
         const id = idsOf([e.card])[0];
@@ -285,6 +291,7 @@ export function replayEvents(events: GameEvent[]): ReplayState {
         const disc = idsOf(e.discarded);
         kept.forEach((id) => bump(e.player === 'me' ? myHandCount : hiddenCount, id, 1));
         disc.forEach((id) => consumed.add(id));
+        discardPileCount += e.discarded.length;
         break;
       }
     }
@@ -298,6 +305,7 @@ export function replayEvents(events: GameEvent[]): ReplayState {
     myHandCardIds: positive(myHandCount),
     knownHiddenCardIds: positive(hiddenCount),
     anonymous: { drawn, discarded: discardedAnon },
+    discardPileCount,
     unresolvedNames: [...unresolved],
   };
 }

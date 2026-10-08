@@ -4,6 +4,7 @@
 
 import type { Advice } from '../advisor/advisor';
 import type { ScoredCard, Weights } from '../advisor/scoring';
+import type { ReconcileIssue } from '../dom/reconcile';
 import type { TrackerView } from '../tracker/tracker';
 import { renderTracker } from './trackerView';
 
@@ -17,9 +18,17 @@ export interface PanelData {
   displayScored: ScoredCard[];
   tracker: TrackerView;
   weights: Weights;
+  /** DOM 对账告警(无告警时传空数组) */
+  issues: ReconcileIssue[];
 }
 
 const MEDALS = ['🥇', '🥈', '🥉'];
+
+function renderIssues(issues: ReconcileIssue[]): string {
+  if (issues.length === 0) return '';
+  const rows = issues.map((i) => `<li>${esc(i.message)}</li>`).join('');
+  return `<div class="ana-section ana-alert-title">⚠️ 对账告警</div><ul class="ana-issues">${rows}</ul>`;
+}
 
 function renderAdvice(advice: Advice[]): string {
   const rows = advice.map((a, i) => `
@@ -54,6 +63,7 @@ function renderWeights(w: Weights): string {
 
 export function renderPanel(data: PanelData): string {
   return [
+    renderIssues(data.issues),
     renderAdvice(data.advice),
     renderScored('手牌评分', data.handScored, 5),
     renderScored('展示区评分', data.displayScored, 5),

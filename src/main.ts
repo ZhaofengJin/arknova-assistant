@@ -4,6 +4,7 @@ import './panel.css';
 import { advise } from './advisor/advisor';
 import { deriveGameState } from './advisor/gameState';
 import { scoreCards } from './advisor/scoring';
+import { readDomSnapshot, reconcile } from './dom/reconcile';
 import { parseLogEntry, replayEvents, type GameEvent } from './log/parser';
 import { mountPanel } from './panel';
 import { loadWeights, saveWeights, type Weights } from './storage';
@@ -55,12 +56,20 @@ function start(): void {
     const events = readEvents(logRoot, myName);
     const replay = replayEvents(events);
     const gs = deriveGameState(events, replay);
+    const tracker = computeTracker(replay, 'mw');
+    const issues = reconcile(readDomSnapshot(document), {
+      displayIds: gs.displayCards.map((c) => c.id),
+      deckEstimate: tracker.deckEstimate,
+      discardEstimate: replay.discardPileCount,
+      displayBlindSpot: gs.displayUnknownRemovals,
+    });
     panel.update(renderPanel({
       advice: advise(gs, weights),
       handScored: scoreCards(gs.myHand, gs, weights),
       displayScored: scoreCards(gs.displayCards, gs, weights),
-      tracker: computeTracker(replay, 'mw'),
+      tracker,
       weights,
+      issues,
     }));
   };
 

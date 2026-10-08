@@ -92,6 +92,21 @@
   margin-top: 6px;
 }
 
+#arknova-assistant-panel .ana-alert-title {
+  color: #f0a35e;
+}
+
+#arknova-assistant-panel .ana-issues {
+  margin: 4px 0 8px;
+  padding: 6px 8px 6px 22px;
+  border: 1px solid #f0a35e55;
+  border-radius: 6px;
+  background: #f0a35e14;
+  color: #f0c08a;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 #arknova-assistant-panel .ana-advice b {
   color: #7ee787;
 }

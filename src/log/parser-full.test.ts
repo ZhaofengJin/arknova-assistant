@@ -31,6 +31,10 @@ describe('完整日志:解析覆盖', () => {
     expect(replayEvents(events).unresolvedNames).toEqual([]);
   });
 
+  it('弃牌堆总数推算:匿名弃牌 + 实名弃牌 + 展示区移除 + 狩猎弃牌', () => {
+    expect(replayEvents(events).discardPileCount).toBe(18);
+  });
+
   it('打出动物:付费打出与免费打出都识别,归属手牌或展示区', () => {
     const plays = byKind('playCard');
     const played = (zh: string) => plays.find((p) => p.card.kind === 'resolved' && p.card.card.nameZh === zh);
