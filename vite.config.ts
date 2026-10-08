@@ -15,11 +15,10 @@ export default defineConfig({
         ],
         'run-at': 'document-idle',
         // Tampermonkey 自动更新:指向 main 分支上的构建产物(raw URL)
-        // GITHUB_OWNER 在建仓后替换为实际用户名
         updateURL:
-          'https://raw.githubusercontent.com/GITHUB_OWNER/arknova-assistant/main/dist/arknova-assistant.user.js',
+          'https://raw.githubusercontent.com/ZhaofengJin/arknova-assistant/main/dist/arknova-assistant.user.js',
         downloadURL:
-          'https://raw.githubusercontent.com/GITHUB_OWNER/arknova-assistant/main/dist/arknova-assistant.user.js',
+          'https://raw.githubusercontent.com/ZhaofengJin/arknova-assistant/main/dist/arknova-assistant.user.js',
       },
       build: {
         fileName: 'arknova-assistant.user.js',

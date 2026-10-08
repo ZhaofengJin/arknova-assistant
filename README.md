@@ -12,7 +12,7 @@ BGA 方舟动物园(Ark Nova)记牌与打法建议浏览器脚本。**个人学�
 ## 安装
 
 1. 安装 [Tampermonkey](https://www.tampermonkey.net/)(Chrome / Edge / Firefox 均可)
-2. 点击安装:[arknova-assistant.user.js](https://raw.githubusercontent.com/GITHUB_OWNER/arknova-assistant/main/dist/arknova-assistant.user.js)
+2. 点击安装:[arknova-assistant.user.js](https://raw.githubusercontent.com/ZhaofengJin/arknova-assistant/main/dist/arknova-assistant.user.js)
 3. 打开 BGA 方舟动物园对局页面,右侧面板自动出现「方舟助手」
 
 安装后脚本会自动检查更新(通过 `@updateURL`)。
