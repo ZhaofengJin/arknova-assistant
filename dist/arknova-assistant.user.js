@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ArkNova Assistant
-// @version      0.1.3
+// @version      0.2.0
 // @description  BGA 方舟动物园记牌与打法建议助手(个人学习参考用)
 // @downloadURL  https://raw.githubusercontent.com/ZhaofengJin/arknova-assistant/main/dist/arknova-assistant.user.js
 // @updateURL    https://raw.githubusercontent.com/ZhaofengJin/arknova-assistant/main/dist/arknova-assistant.user.js
