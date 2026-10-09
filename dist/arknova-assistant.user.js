@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         ArkNova Assistant
-// @version      0.1.2
+// @version      0.1.3
 // @description  BGA 方舟动物园记牌与打法建议助手(个人学习参考用)
 // @downloadURL  https://raw.githubusercontent.com/ZhaofengJin/arknova-assistant/main/dist/arknova-assistant.user.js
 // @updateURL    https://raw.githubusercontent.com/ZhaofengJin/arknova-assistant/main/dist/arknova-assistant.user.js
@@ -10,7 +10,7 @@
 // @run-at       document-idle
 // ==/UserScript==
 
-(a=>{if(typeof GM_addStyle=="function"){GM_addStyle(a);return}const n=document.createElement("style");n.textContent=a,document.head.append(n)})(" #arknova-assistant-panel{position:fixed;z-index:99999;width:320px;background:#1e2126;color:#e8e8e8;border:1px solid #3a3f47;border-radius:8px;box-shadow:0 4px 16px #0006;font:13px/1.5 -apple-system,PingFang SC,Microsoft YaHei,sans-serif;-webkit-user-select:none;user-select:none}#arknova-assistant-panel .ana-header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#2a2e35;border-radius:8px 8px 0 0;cursor:move;font-weight:600}#arknova-assistant-panel .ana-toggle{background:none;border:1px solid #555c66;border-radius:4px;color:#cfd3da;cursor:pointer;padding:1px 8px;font-size:12px}#arknova-assistant-panel .ana-toggle:hover{background:#3a3f47}#arknova-assistant-panel .ana-body{padding:10px;max-height:60vh;overflow-y:auto;-webkit-user-select:text;user-select:text}#arknova-assistant-panel .ana-summary{margin-bottom:4px}#arknova-assistant-panel .ana-types{color:#9aa2ad;font-size:12px;margin-bottom:8px}#arknova-assistant-panel .ana-section{font-weight:600;margin:6px 0 4px}#arknova-assistant-panel .ana-top{margin:0;padding-left:4px;list-style:none}#arknova-assistant-panel .ana-top li{display:flex;gap:6px;align-items:baseline;padding:1px 0}#arknova-assistant-panel .ana-rank{color:#9aa2ad;min-width:18px}#arknova-assistant-panel .ana-en{color:#7d8590;font-size:11px}#arknova-assistant-panel .ana-pct{margin-left:auto;font-variant-numeric:tabular-nums;color:#7ee787}#arknova-assistant-panel .ana-warn{color:#f0a35e;margin-top:6px}#arknova-assistant-panel .ana-alert-title{color:#f0a35e}#arknova-assistant-panel .ana-issues{margin:4px 0 8px;padding:6px 8px 6px 22px;border:1px solid #f0a35e55;border-radius:6px;background:#f0a35e14;color:#f0c08a;font-size:11px;line-height:1.5}#arknova-assistant-panel .ana-advice b{color:#7ee787}#arknova-assistant-panel .ana-reason{color:#9aa2ad;font-size:11px;padding-left:24px;line-height:1.4}#arknova-assistant-panel .ana-partial{font-size:10px}#arknova-assistant-panel .ana-weights{margin-top:10px;border-top:1px solid #3a3f47;padding-top:6px;font-size:12px;color:#9aa2ad}#arknova-assistant-panel .ana-weights summary{cursor:pointer}#arknova-assistant-panel .ana-weight{display:flex;align-items:center;gap:6px;margin-top:4px}#arknova-assistant-panel .ana-weight input{flex:1} ");
+(a=>{if(typeof GM_addStyle=="function"){GM_addStyle(a);return}const n=document.createElement("style");n.textContent=a,document.head.append(n)})(" #arknova-assistant-panel{position:fixed;z-index:99999;width:320px;background:#1e2126;color:#e8e8e8;border:1px solid #3a3f47;border-radius:8px;box-shadow:0 4px 16px #0006;font:13px/1.5 -apple-system,PingFang SC,Microsoft YaHei,sans-serif;-webkit-user-select:none;user-select:none}#arknova-assistant-panel .ana-header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#2a2e35;border-radius:8px 8px 0 0;cursor:move;font-weight:600}#arknova-assistant-panel .ana-toggle{background:none;border:1px solid #555c66;border-radius:4px;color:#cfd3da;cursor:pointer;padding:1px 8px;font-size:12px}#arknova-assistant-panel .ana-toggle:hover{background:#3a3f47}#arknova-assistant-panel .ana-body{padding:10px;max-height:60vh;overflow-y:auto;-webkit-user-select:text;user-select:text}#arknova-assistant-panel .ana-summary{margin-bottom:4px}#arknova-assistant-panel .ana-types{color:#9aa2ad;font-size:12px;margin-bottom:8px}#arknova-assistant-panel .ana-section{font-weight:600;margin:6px 0 4px}#arknova-assistant-panel .ana-top{margin:0;padding-left:4px;list-style:none}#arknova-assistant-panel .ana-top li{display:flex;gap:6px;align-items:baseline;padding:1px 0}#arknova-assistant-panel .ana-rank{color:#9aa2ad;min-width:18px}#arknova-assistant-panel .ana-en{color:#7d8590;font-size:11px}#arknova-assistant-panel .ana-pct{margin-left:auto;font-variant-numeric:tabular-nums;color:#7ee787}#arknova-assistant-panel .ana-warn{color:#f0a35e;margin-top:6px}#arknova-assistant-panel .ana-alert-title{color:#f0a35e}#arknova-assistant-panel .ana-issues{margin:4px 0 8px;padding:6px 8px 6px 22px;border:1px solid #f0a35e55;border-radius:6px;background:#f0a35e14;color:#f0c08a;font-size:11px;line-height:1.5}#arknova-assistant-panel .ana-advice b{color:#7ee787}#arknova-assistant-panel .ana-reason{color:#9aa2ad;font-size:11px;padding-left:24px;line-height:1.4}#arknova-assistant-panel .ana-partial{font-size:10px}#arknova-assistant-panel .ana-weights{margin-top:10px;border-top:1px solid #3a3f47;padding-top:6px;font-size:12px;color:#9aa2ad}#arknova-assistant-panel .ana-weights summary{cursor:pointer}#arknova-assistant-panel .ana-weight{display:flex;align-items:center;gap:6px;margin-top:4px}#arknova-assistant-panel .ana-weight input{flex:1}#arknova-assistant-panel .ana-status{margin-top:8px;border-top:1px solid #3a3f47;padding-top:4px;font-size:10px;color:#6b7280} ");
 
 (function () {
   'use strict';
@@ -272,12 +272,14 @@
   }
   function resolveCards(names) {
     return names.map((n) => {
-      const card = cardByDisplayName(n);
+      const card = cardByDisplayName(n) ?? cardByDisplayName(n.replace(/\s*\([^)]*\)\s*$/, "").trim());
       return card ? { kind: "resolved", card } : { kind: "unresolved", rawName: n };
     });
   }
   const P = {
     drawNamed: /^(.+?)从牌库中抓取到了(.+?)(?:\((终局计分卡牌)\))?$/,
+    // 大学奖励抓牌(实名):「由于你获得新的大学: 因此抓取了 锥齿鲨」
+    uniDraw: /^由于(.+?)获得新的大学:\s*因此抓取了\s*(.+)$/,
     drawAnon: /^(.+?)从牌库中抓取(\d+)张(终局计分)?卡牌$/,
     insightDraw: /^(.+?)抓取了(\d+)张卡牌\((洞察力效果)\)$/,
     insightDiscard: /^洞察力效果:(.+?)\s*保留\s*(\d+)\s*张牌并丢弃\s*(\d+)\s*张牌$/,
@@ -304,6 +306,8 @@
     gain: /^(.+?)获得(?:\s*(\d+))?\s*(?:\((.+?)\))?$/,
     actionSelected: /^(.+?)选择强度为\s*(\d+)\s*的行动卡牌\s*(.*)$/,
     actionPlaced: /^(.+?)将行动卡\s*放置在位置(\d+)/,
+    // 机灵等效果放置:图标替代了「行动卡」文字
+    actionPlacedEffect: /^(.+?)将\s*放置在位置(\d+)\((.+?)\)$/,
     actionSet: /^(.+?)将使用以下行动卡牌:(.+)$/,
     projectSupport: /^(.+?)支持了保护项目的第(?:[一二三四五]|[1-5])格:(.+)$/,
     timestamp: /^\d{1,2}:\d{2}$/
@@ -333,13 +337,24 @@
     /^(.+?)推进了\d+格休息标记并到达了尽头/,
     /^(.+?)\s*增加声望$/,
     /^(.+?)获得一个新的协会事务员$/,
-    /^(.+?)\s*拿取一个新的合作动物园$/,
+    /^(.+?)\s*拿取一个新的(合作动物园|大学)$/,
+    /^(.+?)触发其(.+?)能力$/,
+    // 珊瑚礁等触发提示,不动牌
+    /^撤销到此步/,
+    // 撤销链接(可能带时间戳尾巴)
+    /^(.+?)免费放置\s*一个(.+?)$/,
+    // 免费放置独有建筑等,不涉及卡牌流
+    /^开始第(一|二|三)轮行动卡轮抽阶段/,
+    /^(.+?)\s*将使用地图\s*(\S+)\s*进行游戏/,
+    /^已根据(.+?)的喜好选择他们的颜色/,
+    /^你知道吗?/,
+    /^改变我的偏好/,
     /^(休息结束|开始一次新的休息|补充合作动物园和大学|将所有玩家的事务员返回他们的个人面板|移除所有玩家卡牌上的指示物)$/
   ];
   function parseLogLine(rawLine, me) {
     const trimmed = rawLine.trim();
     if (!trimmed) return null;
-    const text = normalizePunctuation(trimmed);
+    const text = normalizePunctuation(trimmed).replace(/\s+/g, " ").trim();
     if (P.timestamp.test(text)) return null;
     let m = text.match(P.insightDiscard);
     if (m) return { kind: "discardAnonymous", player: normPlayer(m[1], me), count: Number(m[3]), reason: "洞察力效果" };
@@ -372,6 +387,8 @@
     if (m) return { kind: "discard", player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), reason: m[3] };
     m = text.match(P.drawAnon);
     if (m) return { kind: "drawAnonymous", player: normPlayer(m[1], me), count: Number(m[2]), deck: m[3] ? "scoring" : "main" };
+    m = text.match(P.uniDraw);
+    if (m) return { kind: "draw", player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: "main" };
     m = text.match(P.drawNamed);
     if (m) return { kind: "draw", player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: m[3] ? "scoring" : "main" };
     m = text.match(P.discardAnon);
@@ -398,6 +415,8 @@
     if (m) return { kind: "actionSelected", player: normPlayer(m[1], me), strength: Number(m[2]), actionCard: m[3].trim() };
     m = text.match(P.actionPlaced);
     if (m) return { kind: "actionPlaced", player: normPlayer(m[1], me), slot: Number(m[2]) };
+    m = text.match(P.actionPlacedEffect);
+    if (m) return { kind: "actionPlaced", player: normPlayer(m[1], me), slot: Number(m[2]) };
     m = text.match(P.actionSet);
     if (m) return { kind: "actionSet", player: normPlayer(m[1], me), raw: m[2].trim() };
     m = text.match(P.projectSupport);
@@ -408,7 +427,10 @@
     return { kind: "unknown", text };
   }
   function parseLogEntry(entryText, me) {
-    return parseLogLine(entryText.replace(/\s+/g, " "), me);
+    return parseLogLine(
+      entryText.replace(/\s+/g, " ").replace(/\s+(\d{1,2}\/\d{2}\/\d{4}\s+)?\d{1,2}:\d{2}\s*$/, ""),
+      me
+    );
   }
   function replayEvents(events) {
     const consumed = /* @__PURE__ */ new Set();
@@ -714,7 +736,8 @@ ${warnings}`;
       renderScored("展示区评分", data.displayScored, 5),
       '<div class="ana-section">记牌</div>',
       renderTracker(data.tracker),
-      renderWeights(data.weights)
+      renderWeights(data.weights),
+      `<div class="ana-status">${esc(data.logStatus)}</div>`
     ].join("");
   }
   function isArknovaTablePage(loc = window.location, doc = document) {
@@ -725,8 +748,11 @@ ${warnings}`;
     }
     return false;
   }
-  function findLogRoot(doc) {
-    return doc.querySelector("#logs") ?? doc.querySelector(".log_history") ?? null;
+  function findLogEntries(doc) {
+    const byId2 = [...doc.querySelectorAll('.log[id^="log_"]')];
+    if (byId2.length > 0) return byId2;
+    const root = doc.querySelector("#logs") ?? doc.querySelector(".log_history");
+    return root ? [...root.querySelectorAll(".log")] : [];
   }
   function getMyName(doc) {
     var _a, _b;
@@ -735,8 +761,8 @@ ${warnings}`;
     const m = doc.documentElement.innerHTML.match(/globalUserInfos=\{[^}]*"name":"([^"]+)"/);
     return m == null ? void 0 : m[1];
   }
-  function readEvents(logRoot, me) {
-    return [...logRoot.querySelectorAll(".log")].map((el) => parseLogEntry(el.innerText ?? el.textContent ?? "", me)).filter((e) => e !== null);
+  function readEvents(entries, me) {
+    return entries.map((el) => parseLogEntry(el.innerText ?? el.textContent ?? "", me)).filter((e) => e !== null);
   }
   function start() {
     const panel = mountPanel();
@@ -744,12 +770,13 @@ ${warnings}`;
     const myName = getMyName(document);
     let weights = loadWeights(window.localStorage);
     const refresh = () => {
-      const logRoot = findLogRoot(document);
-      if (!logRoot) {
-        panel.update('<div class="ana-warn">未找到日志容器(BGA 布局可能已改版)</div>');
+      const entries = findLogEntries(document);
+      if (entries.length === 0) {
+        panel.update('<div class="ana-warn">未读到任何日志条目(BGA 布局可能已改版,或游戏尚未开始)</div>');
         return;
       }
-      const events = readEvents(logRoot, myName);
+      const events = readEvents(entries, myName);
+      const unknownCount = events.filter((e) => e.kind === "unknown").length;
       const replay = replayEvents(events);
       const gs = deriveGameState(events, replay);
       const tracker = computeTracker(replay, "mw");
@@ -759,13 +786,16 @@ ${warnings}`;
         discardEstimate: replay.discardPileCount,
         displayBlindSpot: gs.displayUnknownRemovals
       });
+      const logStatus = `日志 ${entries.length} 条 → 事件 ${events.length}(未知 ${unknownCount})`;
+      console.info("[ArkNova Assistant]", logStatus);
       panel.update(renderPanel({
         advice: advise(gs, weights),
         handScored: scoreCards(gs.myHand, gs, weights),
         displayScored: scoreCards(gs.displayCards, gs, weights),
         tracker,
         weights,
-        issues
+        issues,
+        logStatus
       }));
     };
     panel.body.addEventListener("input", (ev) => {
@@ -778,17 +808,25 @@ ${warnings}`;
       refresh();
     });
     const tryAttach = () => {
-      const logRoot = findLogRoot(document);
-      if (!logRoot) {
+      if (findLogEntries(document).length === 0) {
         setTimeout(tryAttach, 1e3);
         return;
       }
       refresh();
       let timer;
-      new MutationObserver(() => {
+      const touchesLog = (muts) => muts.some(
+        (m) => [...m.addedNodes, ...m.removedNodes].some(
+          (n) => {
+            var _a, _b;
+            return n instanceof HTMLElement && (((_a = n.classList) == null ? void 0 : _a.contains("log")) || ((_b = n.querySelector) == null ? void 0 : _b.call(n, ".log")) !== null);
+          }
+        )
+      );
+      new MutationObserver((muts) => {
+        if (!touchesLog(muts)) return;
         clearTimeout(timer);
         timer = setTimeout(refresh, 300);
-      }).observe(logRoot, { childList: true, subtree: true });
+      }).observe(document.body, { childList: true, subtree: true });
     };
     tryAttach();
   }
