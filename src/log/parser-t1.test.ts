@@ -4,6 +4,7 @@
 
 import { readFileSync } from 'fs';
 import { describe, expect, it } from 'vitest';
+import { trackJourneys } from '../tracker/journey';
 import { parseLogEntry, replayEvents, type GameEvent } from './parser';
 
 const lines = readFileSync('samples/game-log-2026-10-08-t1.txt', 'utf8').split('\n').filter(Boolean);
@@ -57,5 +58,31 @@ describe('T1 局日志:新模式事件', () => {
   it('支持保护项目第二格(序号不再只认第一格)', () => {
     const support = events.find((e) => e.kind === 'projectSupport');
     expect(support).toMatchObject({ player: 'ThePerty', project: '欧洲' });
+  });
+});
+
+describe('T1 局日志:逐牌履历(工单 11)', () => {
+  // 履历依赖时间正序;样本文件是倒序(最新在前)
+  const chronological = [...events].reverse();
+  const journeys = trackJourneys(chronological);
+  const me = journeys.find((j) => j.player === 'me')!;
+  const perty = journeys.find((j) => j.player === 'ThePerty')!;
+
+  it('我的在手牌带来源:海龟水族箱(蛙潜)、白犀牛(展示区)', () => {
+    const hand = Object.fromEntries(me.knownHand.map((e) => [e.card.nameZh, e.source]));
+    expect(hand['海龟水族箱']).toBe('蛙潜');
+    expect(hand['白犀牛']).toBe('展示区');
+  });
+
+  it('我的已弃牌完整(蛙潜弃除 7 张)', () => {
+    expect(me.discarded.map((e) => e.card.nameZh)).toEqual([
+      '邦加跗猴', '大羊驼', '越南大肚猪', '优胜美地国家公园', '非洲草原象', '山貘', '欧洲海马',
+    ]);
+  });
+
+  it('对手已知手牌:ThePerty 持有秃鹳(狩猎),已打出马来熊(来源未知)', () => {
+    expect(perty.knownHand.map((e) => `${e.card.nameZh}:${e.source}`)).toEqual(['秃鹳:狩猎']);
+    expect(perty.played.map((e) => `${e.card.nameZh}:${e.source}`)).toEqual(['马来熊:手牌(来源未知)']);
+    expect(perty.anonymousHand).toBe(0);
   });
 });

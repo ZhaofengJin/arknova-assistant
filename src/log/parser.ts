@@ -14,7 +14,7 @@ export type PlayerRef = 'me' | string;
 export type CardRef = { kind: 'resolved'; card: Card } | { kind: 'unresolved'; rawName: string };
 
 export type GameEvent =
-  | { kind: 'draw'; player: PlayerRef; cards: CardRef[]; deck: 'main' | 'scoring' }
+  | { kind: 'draw'; player: PlayerRef; cards: CardRef[]; deck: 'main' | 'scoring'; origin?: string }
   | { kind: 'drawAnonymous'; player: PlayerRef; count: number; deck: 'main' | 'scoring' }
   | { kind: 'discard'; player: PlayerRef; cards: CardRef[]; reason?: string }
   | { kind: 'discardAnonymous'; player: PlayerRef; count: number; reason?: string }
@@ -24,8 +24,9 @@ export type GameEvent =
   | { kind: 'takeDisplay'; player: PlayerRef; card: CardRef }
   | { kind: 'huntReveal'; player: PlayerRef; cards: CardRef[] }
   /** 狩猎/蛙潜的保留+弃除。discardedCount:弃牌只有数量没有牌面(狩猎保留计牌变体);
-   *  fromAnonymousDraw:保留的牌来自「抽取 N 张」匿名摸牌,回放时从匿名手牌估计中剔除 */
-  | { kind: 'huntKeep'; player: PlayerRef; kept: CardRef[]; discarded: CardRef[]; discardedCount?: number; fromAnonymousDraw?: boolean }
+   *  fromAnonymousDraw:保留的牌来自「抽取 N 张」匿名摸牌,回放时从匿名手牌估计中剔除;
+   *  origin:来源(狩猎/蛙潜),供履历记牌器展示 */
+  | { kind: 'huntKeep'; player: PlayerRef; kept: CardRef[]; discarded: CardRef[]; discardedCount?: number; fromAnonymousDraw?: boolean; origin?: string }
   | { kind: 'build'; player: PlayerRef; cost: number; structure: string }
   | { kind: 'gain'; player: PlayerRef; amount?: number; source?: string }
   | { kind: 'projectSupport'; player: PlayerRef; project: string }
@@ -144,7 +145,7 @@ export function parseLogLine(rawLine: string, me?: string): GameEvent | null {
 
   // 蛙潜/狩猎保留计牌变体必须在 huntKeep / discardNamed 之前,否则会被吞成误归属
   m = text.match(P.scubaKeep);
-  if (m) return { kind: 'huntKeep', player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])) };
+  if (m) return { kind: 'huntKeep', player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])), origin: '蛙潜' };
 
   m = text.match(P.huntKeepCount);
   if (m) {
@@ -155,6 +156,7 @@ export function parseLogLine(rawLine: string, me?: string): GameEvent | null {
       discarded: [],
       discardedCount: Number(m[3]),
       fromAnonymousDraw: true,
+      origin: '狩猎',
     };
   }
 
@@ -165,7 +167,7 @@ export function parseLogLine(rawLine: string, me?: string): GameEvent | null {
   if (m) return { kind: 'discardAnonymous', player: normPlayer(m[1], me), count: Number(m[2]), reason: '地图效果' };
 
   m = text.match(P.huntKeep);
-  if (m) return { kind: 'huntKeep', player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])) };
+  if (m) return { kind: 'huntKeep', player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])), origin: '狩猎' };
 
   m = text.match(P.huntReveal);
   if (m) return { kind: 'huntReveal', player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])) };
@@ -183,7 +185,7 @@ export function parseLogLine(rawLine: string, me?: string): GameEvent | null {
   if (m) return { kind: 'drawAnonymous', player: normPlayer(m[1], me), count: Number(m[2]), deck: m[3] ? 'scoring' : 'main' };
 
   m = text.match(P.uniDraw);
-  if (m) return { kind: 'draw', player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: 'main' };
+  if (m) return { kind: 'draw', player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: 'main', origin: '大学奖励' };
 
   m = text.match(P.drawNamed);
   if (m) return { kind: 'draw', player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: m[3] ? 'scoring' : 'main' };

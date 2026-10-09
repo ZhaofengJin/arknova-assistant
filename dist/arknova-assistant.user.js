@@ -10,7 +10,7 @@
 // @run-at       document-idle
 // ==/UserScript==
 
-(a=>{if(typeof GM_addStyle=="function"){GM_addStyle(a);return}const n=document.createElement("style");n.textContent=a,document.head.append(n)})(" #arknova-assistant-panel{position:fixed;z-index:99999;width:320px;background:#1e2126;color:#e8e8e8;border:1px solid #3a3f47;border-radius:8px;box-shadow:0 4px 16px #0006;font:13px/1.5 -apple-system,PingFang SC,Microsoft YaHei,sans-serif;-webkit-user-select:none;user-select:none}#arknova-assistant-panel .ana-header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#2a2e35;border-radius:8px 8px 0 0;cursor:move;font-weight:600}#arknova-assistant-panel .ana-toggle{background:none;border:1px solid #555c66;border-radius:4px;color:#cfd3da;cursor:pointer;padding:1px 8px;font-size:12px}#arknova-assistant-panel .ana-toggle:hover{background:#3a3f47}#arknova-assistant-panel .ana-body{padding:10px;max-height:60vh;overflow-y:auto;-webkit-user-select:text;user-select:text}#arknova-assistant-panel .ana-summary{margin-bottom:4px}#arknova-assistant-panel .ana-types{color:#9aa2ad;font-size:12px;margin-bottom:8px}#arknova-assistant-panel .ana-section{font-weight:600;margin:6px 0 4px}#arknova-assistant-panel .ana-top{margin:0;padding-left:4px;list-style:none}#arknova-assistant-panel .ana-top li{display:flex;gap:6px;align-items:baseline;padding:1px 0}#arknova-assistant-panel .ana-rank{color:#9aa2ad;min-width:18px}#arknova-assistant-panel .ana-en{color:#7d8590;font-size:11px}#arknova-assistant-panel .ana-pct{margin-left:auto;font-variant-numeric:tabular-nums;color:#7ee787}#arknova-assistant-panel .ana-warn{color:#f0a35e;margin-top:6px}#arknova-assistant-panel .ana-alert-title{color:#f0a35e}#arknova-assistant-panel .ana-issues{margin:4px 0 8px;padding:6px 8px 6px 22px;border:1px solid #f0a35e55;border-radius:6px;background:#f0a35e14;color:#f0c08a;font-size:11px;line-height:1.5}#arknova-assistant-panel .ana-advice b{color:#7ee787}#arknova-assistant-panel .ana-reason{color:#9aa2ad;font-size:11px;padding-left:24px;line-height:1.4}#arknova-assistant-panel .ana-partial{font-size:10px}#arknova-assistant-panel .ana-weights{margin-top:10px;border-top:1px solid #3a3f47;padding-top:6px;font-size:12px;color:#9aa2ad}#arknova-assistant-panel .ana-weights summary{cursor:pointer}#arknova-assistant-panel .ana-weight{display:flex;align-items:center;gap:6px;margin-top:4px}#arknova-assistant-panel .ana-weight input{flex:1}#arknova-assistant-panel .ana-status{margin-top:8px;border-top:1px solid #3a3f47;padding-top:4px;font-size:10px;color:#6b7280} ");
+(a=>{if(typeof GM_addStyle=="function"){GM_addStyle(a);return}const n=document.createElement("style");n.textContent=a,document.head.append(n)})(" #arknova-assistant-panel{position:fixed;z-index:99999;width:320px;background:#1e2126;color:#e8e8e8;border:1px solid #3a3f47;border-radius:8px;box-shadow:0 4px 16px #0006;font:13px/1.5 -apple-system,PingFang SC,Microsoft YaHei,sans-serif;-webkit-user-select:none;user-select:none}#arknova-assistant-panel .ana-header{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#2a2e35;border-radius:8px 8px 0 0;cursor:move;font-weight:600}#arknova-assistant-panel .ana-toggle{background:none;border:1px solid #555c66;border-radius:4px;color:#cfd3da;cursor:pointer;padding:1px 8px;font-size:12px}#arknova-assistant-panel .ana-toggle:hover{background:#3a3f47}#arknova-assistant-panel .ana-body{padding:10px;max-height:60vh;overflow-y:auto;-webkit-user-select:text;user-select:text}#arknova-assistant-panel .ana-summary{margin-bottom:4px}#arknova-assistant-panel .ana-types{color:#9aa2ad;font-size:12px;margin-bottom:8px}#arknova-assistant-panel .ana-section{font-weight:600;margin:6px 0 4px}#arknova-assistant-panel .ana-top{margin:0;padding-left:4px;list-style:none}#arknova-assistant-panel .ana-top li{display:flex;gap:6px;align-items:baseline;padding:1px 0}#arknova-assistant-panel .ana-rank{color:#9aa2ad;min-width:18px}#arknova-assistant-panel .ana-en{color:#7d8590;font-size:11px}#arknova-assistant-panel .ana-pct{margin-left:auto;font-variant-numeric:tabular-nums;color:#7ee787}#arknova-assistant-panel .ana-warn{color:#f0a35e;margin-top:6px}#arknova-assistant-panel .ana-alert-title{color:#f0a35e}#arknova-assistant-panel .ana-issues{margin:4px 0 8px;padding:6px 8px 6px 22px;border:1px solid #f0a35e55;border-radius:6px;background:#f0a35e14;color:#f0c08a;font-size:11px;line-height:1.5}#arknova-assistant-panel .ana-advice b{color:#7ee787}#arknova-assistant-panel .ana-reason{color:#9aa2ad;font-size:11px;padding-left:24px;line-height:1.4}#arknova-assistant-panel .ana-partial{font-size:10px}#arknova-assistant-panel .ana-weights{margin-top:10px;border-top:1px solid #3a3f47;padding-top:6px;font-size:12px;color:#9aa2ad}#arknova-assistant-panel .ana-weights summary{cursor:pointer}#arknova-assistant-panel .ana-weight{display:flex;align-items:center;gap:6px;margin-top:4px}#arknova-assistant-panel .ana-weight input{flex:1}#arknova-assistant-panel .ana-status{margin-top:8px;border-top:1px solid #3a3f47;padding-top:4px;font-size:10px;color:#6b7280}#arknova-assistant-panel .ana-player{margin:4px 0;border:1px solid #3a3f47;border-radius:6px;padding:4px 8px}#arknova-assistant-panel .ana-player summary{cursor:pointer;font-size:12px}#arknova-assistant-panel .ana-prow{margin-top:4px;font-size:11px;line-height:1.9;color:#9aa2ad}#arknova-assistant-panel .ana-card{display:inline-block;background:#2a2f37;border-radius:4px;padding:1px 6px;margin:0 4px 2px 0;color:#e6e9ee}#arknova-assistant-panel .ana-card i{font-style:normal;font-size:10px;color:#7ee787;margin-left:4px}#arknova-assistant-panel .ana-card.ana-played{opacity:.65}#arknova-assistant-panel .ana-card.ana-gone{opacity:.45;text-decoration:line-through}#arknova-assistant-panel .ana-dim{color:#6b7280;font-weight:400}#arknova-assistant-panel .ana-guess{color:#f0c08a} ");
 
 (function () {
   'use strict';
@@ -359,7 +359,7 @@
     let m = text.match(P.insightDiscard);
     if (m) return { kind: "discardAnonymous", player: normPlayer(m[1], me), count: Number(m[3]), reason: "洞察力效果" };
     m = text.match(P.scubaKeep);
-    if (m) return { kind: "huntKeep", player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])) };
+    if (m) return { kind: "huntKeep", player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])), origin: "蛙潜" };
     m = text.match(P.huntKeepCount);
     if (m) {
       return {
@@ -368,7 +368,8 @@
         kept: resolveCards(splitNames(m[2])),
         discarded: [],
         discardedCount: Number(m[3]),
-        fromAnonymousDraw: true
+        fromAnonymousDraw: true,
+        origin: "狩猎"
       };
     }
     m = text.match(P.huntDraw);
@@ -376,7 +377,7 @@
     m = text.match(P.mapDiscard);
     if (m) return { kind: "discardAnonymous", player: normPlayer(m[1], me), count: Number(m[2]), reason: "地图效果" };
     m = text.match(P.huntKeep);
-    if (m) return { kind: "huntKeep", player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])) };
+    if (m) return { kind: "huntKeep", player: normPlayer(m[1], me), kept: resolveCards(splitNames(m[2])), discarded: resolveCards(splitNames(m[3])), origin: "狩猎" };
     m = text.match(P.huntReveal);
     if (m) return { kind: "huntReveal", player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])) };
     m = text.match(P.insightDraw);
@@ -388,7 +389,7 @@
     m = text.match(P.drawAnon);
     if (m) return { kind: "drawAnonymous", player: normPlayer(m[1], me), count: Number(m[2]), deck: m[3] ? "scoring" : "main" };
     m = text.match(P.uniDraw);
-    if (m) return { kind: "draw", player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: "main" };
+    if (m) return { kind: "draw", player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: "main", origin: "大学奖励" };
     m = text.match(P.drawNamed);
     if (m) return { kind: "draw", player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: m[3] ? "scoring" : "main" };
     m = text.match(P.discardAnon);
@@ -632,6 +633,82 @@
       header.ownerDocument.addEventListener("pointerup", onUp);
     });
   }
+  function takeFromHand(hand, cardId) {
+    const i = hand.findIndex((e) => e.card.id === cardId);
+    if (i < 0) return void 0;
+    const [entry] = hand.splice(i, 1);
+    return entry.source;
+  }
+  function trackJourneys(events) {
+    const journeys = /* @__PURE__ */ new Map();
+    const anonDrawn = {};
+    const anonDiscarded = {};
+    const anonScoring = {};
+    const knownFromAnon = {};
+    const of = (player) => {
+      let j = journeys.get(player);
+      if (!j) {
+        j = { player, knownHand: [], played: [], discarded: [], anonymousHand: 0, anonymousScoring: 0 };
+        journeys.set(player, j);
+      }
+      return j;
+    };
+    const obtain = (player, ref, source) => {
+      if (ref.kind === "resolved") of(player).knownHand.push({ card: ref.card, source });
+    };
+    for (const e of events) {
+      switch (e.kind) {
+        case "draw": {
+          const source = e.deck === "scoring" ? "终局计分牌库" : e.origin === "大学奖励" ? "大学奖励" : "牌库";
+          for (const ref of e.cards) obtain(e.player, ref, source);
+          break;
+        }
+        case "drawAnonymous":
+          of(e.player);
+          if (e.deck === "scoring") anonScoring[e.player] = (anonScoring[e.player] ?? 0) + e.count;
+          else anonDrawn[e.player] = (anonDrawn[e.player] ?? 0) + e.count;
+          break;
+        case "discard":
+          for (const ref of e.cards) {
+            if (ref.kind !== "resolved") continue;
+            const source = takeFromHand(of(e.player).knownHand, ref.card.id) ?? "手牌(来源未知)";
+            of(e.player).discarded.push({ card: ref.card, source });
+          }
+          break;
+        case "discardAnonymous":
+          of(e.player);
+          anonDiscarded[e.player] = (anonDiscarded[e.player] ?? 0) + e.count;
+          break;
+        case "takeDisplay":
+          obtain(e.player, e.card, "展示区");
+          break;
+        case "playCard": {
+          if (e.card.kind !== "resolved") break;
+          const source = e.from === "display" ? "展示区" : takeFromHand(of(e.player).knownHand, e.card.card.id) ?? "手牌(来源未知)";
+          of(e.player).played.push({ card: e.card.card, source });
+          break;
+        }
+        case "huntKeep": {
+          const source = e.origin === "蛙潜" ? "蛙潜" : "狩猎";
+          for (const ref of e.kept) obtain(e.player, ref, source);
+          for (const ref of e.discarded) {
+            if (ref.kind === "resolved") of(e.player).discarded.push({ card: ref.card, source });
+          }
+          if (e.discardedCount) anonDiscarded[e.player] = (anonDiscarded[e.player] ?? 0) + e.discardedCount;
+          if (e.fromAnonymousDraw) knownFromAnon[e.player] = (knownFromAnon[e.player] ?? 0) + e.kept.filter((r) => r.kind === "resolved").length;
+          break;
+        }
+      }
+    }
+    for (const j of journeys.values()) {
+      const drawn = Math.max(0, (anonDrawn[j.player] ?? 0) - (knownFromAnon[j.player] ?? 0));
+      j.anonymousHand = Math.max(0, drawn - (anonDiscarded[j.player] ?? 0));
+      j.anonymousScoring = anonScoring[j.player] ?? 0;
+    }
+    return [...journeys.values()].sort(
+      (a, b) => a.player === "me" ? -1 : b.player === "me" ? 1 : String(a.player).localeCompare(String(b.player))
+    );
+  }
   function deckProbability(unknownCopies, unknownTotal, opponentHand) {
     if (unknownTotal <= 0) return 0;
     if (opponentHand < unknownCopies) return 1;
@@ -700,6 +777,30 @@ ${warnings}`;
     const rows = issues.map((i) => `<li>${esc(i.message)}</li>`).join("");
     return `<div class="ana-section ana-alert-title">⚠️ 对账告警</div><ul class="ana-issues">${rows}</ul>`;
   }
+  function renderJourneys(journeys, guess) {
+    if (journeys.length === 0) return "";
+    const cardList = (entries, cls) => entries.map((e) => `<span class="ana-card ${cls}">${esc(e.card.nameZh)}<i>${e.source}</i></span>`).join("");
+    const blocks = journeys.map((j) => {
+      const name = j.player === "me" ? "我" : esc(String(j.player));
+      const handTotal = j.knownHand.length + j.anonymousHand;
+      const summaryParts = [`手牌 ${handTotal}`];
+      if (j.anonymousHand > 0) summaryParts.push(`其中未知 ${j.anonymousHand}`);
+      if (j.anonymousScoring > 0) summaryParts.push(`终局计分 ${j.anonymousScoring}`);
+      if (j.played.length > 0) summaryParts.push(`已用 ${j.played.length}`);
+      if (j.discarded.length > 0) summaryParts.push(`已弃 ${j.discarded.length}`);
+      const lines = [];
+      if (j.knownHand.length > 0) lines.push(`<div class="ana-prow">在手 ${cardList(j.knownHand, "ana-hand")}</div>`);
+      if (j.played.length > 0) lines.push(`<div class="ana-prow">已用 ${cardList(j.played, "ana-played")}</div>`);
+      if (j.discarded.length > 0) lines.push(`<div class="ana-prow">已弃 ${cardList(j.discarded, "ana-gone")}</div>`);
+      if (lines.length === 0) lines.push('<div class="ana-prow ana-dim">尚无已知身份的牌</div>');
+      return `<details class="ana-player" ${j.player === "me" ? "open" : ""}>
+      <summary><b>${name}</b> <span class="ana-dim">${summaryParts.join(" · ")}</span></summary>
+      ${lines.join("")}
+    </details>`;
+    });
+    const guessHtml = guess.length > 0 ? `<div class="ana-prow ana-guess">对手可能持有:${guess.map((g) => `${esc(g.name)} ${Math.round(g.probability * 100)}%`).join(" · ")}</div>` : "";
+    return `<div class="ana-section">玩家手牌</div>${blocks.join("")}${guessHtml}`;
+  }
   function renderAdvice(advice) {
     const rows = advice.map((a, i) => `
     <li>
@@ -731,6 +832,7 @@ ${warnings}`;
   function renderPanel(data) {
     return [
       renderIssues(data.issues),
+      renderJourneys(data.journeys, data.handGuess),
       renderAdvice(data.advice),
       renderScored("手牌评分", data.handScored, 5),
       renderScored("展示区评分", data.displayScored, 5),
@@ -762,7 +864,12 @@ ${warnings}`;
     return m == null ? void 0 : m[1];
   }
   function readEvents(entries, me) {
-    return entries.map((el) => parseLogEntry(el.innerText ?? el.textContent ?? "", me)).filter((e) => e !== null);
+    const num2 = (el) => {
+      var _a;
+      return Number(((_a = /^log_(\d+)$/.exec(el.id)) == null ? void 0 : _a[1]) ?? 0);
+    };
+    const sorted = [...entries].sort((a, b) => num2(a) - num2(b));
+    return sorted.map((el) => parseLogEntry(el.innerText ?? el.textContent ?? "", me)).filter((e) => e !== null);
   }
   function start() {
     const panel = mountPanel();
@@ -788,6 +895,7 @@ ${warnings}`;
       });
       const logStatus = `日志 ${entries.length} 条 → 事件 ${events.length}(未知 ${unknownCount})`;
       console.info("[ArkNova Assistant]", logStatus);
+      const handGuess = tracker.opponentHandEstimate > 0 ? [...tracker.entries].sort((a, b) => a.deckProbability - b.deckProbability).filter((e) => e.deckProbability < 1).slice(0, 5).map((e) => ({ name: e.card.nameZh, probability: 1 - e.deckProbability })) : [];
       panel.update(renderPanel({
         advice: advise(gs, weights),
         handScored: scoreCards(gs.myHand, gs, weights),
@@ -795,7 +903,9 @@ ${warnings}`;
         tracker,
         weights,
         issues,
-        logStatus
+        logStatus,
+        journeys: trackJourneys(events),
+        handGuess
       }));
     };
     panel.body.addEventListener("input", (ev) => {

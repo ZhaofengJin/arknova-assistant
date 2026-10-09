@@ -8,6 +8,7 @@ import { readDomSnapshot, reconcile } from './dom/reconcile';
 import { parseLogEntry, replayEvents, type GameEvent } from './log/parser';
 import { mountPanel } from './panel';
 import { loadWeights, saveWeights, type Weights } from './storage';
+import { trackJourneys } from './tracker/journey';
 import { computeTracker } from './tracker/tracker';
 import { renderPanel } from './ui/panelView';
 
@@ -40,7 +41,10 @@ function getMyName(doc: Document): string | undefined {
 }
 
 function readEvents(entries: HTMLElement[], me?: string): GameEvent[] {
-  return entries
+  // 按日志 id 升序(时间正序)排列:履历记牌与展示区盲区判定都依赖顺序
+  const num = (el: HTMLElement): number => Number(/^log_(\d+)$/.exec(el.id)?.[1] ?? 0);
+  const sorted = [...entries].sort((a, b) => num(a) - num(b));
+  return sorted
     .map((el) => parseLogEntry(el.innerText ?? el.textContent ?? '', me))
     .filter((e): e is GameEvent => e !== null);
 }
@@ -72,6 +76,15 @@ function start(): void {
     // 诊断行:排查布局改版时让用户截图这一行即可
     const logStatus = `日志 ${entries.length} 条 → 事件 ${events.length}(未知 ${unknownCount})`;
     console.info('[ArkNova Assistant]', logStatus);
+    // 对手手牌猜测:未知池中在牌库概率最低的牌,最可能被摸走
+    const handGuess =
+      tracker.opponentHandEstimate > 0
+        ? [...tracker.entries]
+            .sort((a, b) => a.deckProbability - b.deckProbability)
+            .filter((e) => e.deckProbability < 1)
+            .slice(0, 5)
+            .map((e) => ({ name: e.card.nameZh, probability: 1 - e.deckProbability }))
+        : [];
     panel.update(renderPanel({
       advice: advise(gs, weights),
       handScored: scoreCards(gs.myHand, gs, weights),
@@ -80,6 +93,8 @@ function start(): void {
       weights,
       issues,
       logStatus,
+      journeys: trackJourneys(events),
+      handGuess,
     }));
   };
 
