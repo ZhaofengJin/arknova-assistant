@@ -20,6 +20,8 @@ export interface PanelData {
   weights: Weights;
   /** DOM 对账告警(无告警时传空数组) */
   issues: ReconcileIssue[];
+  /** 诊断行:日志条目/事件计数,排查布局问题时让用户截图此行 */
+  logStatus: string;
 }
 
 const MEDALS = ['🥇', '🥈', '🥉'];
@@ -70,5 +72,6 @@ export function renderPanel(data: PanelData): string {
     '<div class="ana-section">记牌</div>',
     renderTracker(data.tracker),
     renderWeights(data.weights),
+    `<div class="ana-status">${esc(data.logStatus)}</div>`,
   ].join('');
 }

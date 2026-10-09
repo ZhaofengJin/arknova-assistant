@@ -21,9 +21,14 @@ function isArknovaTablePage(loc: Location = window.location, doc: Document = doc
   return false;
 }
 
-/** BGA 日志容器:经典布局为 #logs,找不到就退到常见备选。 */
-function findLogRoot(doc: Document): HTMLElement | null {
-  return doc.querySelector('#logs') ?? doc.querySelector('.log_history') ?? null;
+/** BGA 日志条目:id 形如 log_N,聊天窗口里的 dockedlog_N 是副本必须排除。
+ *  不按容器找(#logs 只存在于经典布局,新布局容器未知),全局按条目 id 前缀找。 */
+function findLogEntries(doc: Document): HTMLElement[] {
+  const byId = [...doc.querySelectorAll<HTMLElement>('.log[id^="log_"]')];
+  if (byId.length > 0) return byId;
+  // 兜底:经典布局容器(某些快照里条目无 id 前缀也能读)
+  const root = doc.querySelector('#logs') ?? doc.querySelector('.log_history');
+  return root ? [...root.querySelectorAll<HTMLElement>('.log')] : [];
 }
 
 /** 本人用户名:优先页面菜单的 .bga-username,兜底内联脚本里的 globalUserInfos。 */
@@ -34,9 +39,9 @@ function getMyName(doc: Document): string | undefined {
   return m?.[1];
 }
 
-function readEvents(logRoot: HTMLElement, me?: string): GameEvent[] {
-  return [...logRoot.querySelectorAll('.log')]
-    .map((el) => parseLogEntry((el as HTMLElement).innerText ?? el.textContent ?? '', me))
+function readEvents(entries: HTMLElement[], me?: string): GameEvent[] {
+  return entries
+    .map((el) => parseLogEntry(el.innerText ?? el.textContent ?? '', me))
     .filter((e): e is GameEvent => e !== null);
 }
 
@@ -48,12 +53,13 @@ function start(): void {
   let weights: Weights = loadWeights(window.localStorage);
 
   const refresh = (): void => {
-    const logRoot = findLogRoot(document);
-    if (!logRoot) {
-      panel.update('<div class="ana-warn">未找到日志容器(BGA 布局可能已改版)</div>');
+    const entries = findLogEntries(document);
+    if (entries.length === 0) {
+      panel.update('<div class="ana-warn">未读到任何日志条目(BGA 布局可能已改版,或游戏尚未开始)</div>');
       return;
     }
-    const events = readEvents(logRoot, myName);
+    const events = readEvents(entries, myName);
+    const unknownCount = events.filter((e) => e.kind === 'unknown').length;
     const replay = replayEvents(events);
     const gs = deriveGameState(events, replay);
     const tracker = computeTracker(replay, 'mw');
@@ -63,6 +69,9 @@ function start(): void {
       discardEstimate: replay.discardPileCount,
       displayBlindSpot: gs.displayUnknownRemovals,
     });
+    // 诊断行:排查布局改版时让用户截图这一行即可
+    const logStatus = `日志 ${entries.length} 条 → 事件 ${events.length}(未知 ${unknownCount})`;
+    console.info('[ArkNova Assistant]', logStatus);
     panel.update(renderPanel({
       advice: advise(gs, weights),
       handScored: scoreCards(gs.myHand, gs, weights),
@@ -70,6 +79,7 @@ function start(): void {
       tracker,
       weights,
       issues,
+      logStatus,
     }));
   };
 
@@ -83,19 +93,28 @@ function start(): void {
     refresh();
   });
 
-  // 日志容器可能晚于脚本加载出现,先轮询找到为止,再挂 MutationObserver
+  // 日志条目可能晚于脚本加载出现,先轮询找到为止;
+  // 之后观察整个 body 的 .log 增删(不依赖具体容器,兼容布局改版)
   const tryAttach = (): void => {
-    const logRoot = findLogRoot(document);
-    if (!logRoot) {
+    if (findLogEntries(document).length === 0) {
       setTimeout(tryAttach, 1000);
       return;
     }
     refresh();
     let timer: ReturnType<typeof setTimeout> | undefined;
-    new MutationObserver(() => {
+    const touchesLog = (muts: MutationRecord[]): boolean =>
+      muts.some((m) =>
+        [...m.addedNodes, ...m.removedNodes].some(
+          (n) =>
+            n instanceof HTMLElement &&
+            (n.classList?.contains('log') || n.querySelector?.('.log') !== null),
+        ),
+      );
+    new MutationObserver((muts) => {
+      if (!touchesLog(muts)) return;
       clearTimeout(timer);
       timer = setTimeout(refresh, 300); // 防抖:一波日志更新只重算一次
-    }).observe(logRoot, { childList: true, subtree: true });
+    }).observe(document.body, { childList: true, subtree: true });
   };
   tryAttach();
 }

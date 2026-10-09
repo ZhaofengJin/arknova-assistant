@@ -126,8 +126,7 @@
   margin-top: 10px;
   border-top: 1px solid #3a3f47;
   padding-top: 6px;
-  font-size: 12px;
-  color: #9aa2ad;
+  font-size: 12px;  color: #9aa2ad;
 }
 
 #arknova-assistant-panel .ana-weights summary {
@@ -143,4 +142,12 @@
 
 #arknova-assistant-panel .ana-weight input {
   flex: 1;
+}
+
+#arknova-assistant-panel .ana-status {
+  margin-top: 8px;
+  border-top: 1px solid #3a3f47;
+  padding-top: 4px;
+  font-size: 10px;
+  color: #6b7280;
 }

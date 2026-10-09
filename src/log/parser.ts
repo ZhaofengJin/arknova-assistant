@@ -55,13 +55,16 @@ function splitNames(raw: string): string[] {
 
 function resolveCards(names: string[]): CardRef[] {
   return names.map((n) => {
-    const card = cardByDisplayName(n);
+    // 直接查不到时剥掉尾部括号注记再试:「海蚀洞 (没有动物)」→「海蚀洞」
+    const card = cardByDisplayName(n) ?? cardByDisplayName(n.replace(/\s*\([^)]*\)\s*$/, '').trim());
     return card ? { kind: 'resolved', card } : { kind: 'unresolved', rawName: n };
   });
 }
 
 const P = {
   drawNamed: /^(.+?)从牌库中抓取到了(.+?)(?:\((终局计分卡牌)\))?$/,
+  // 大学奖励抓牌(实名):「由于你获得新的大学: 因此抓取了 锥齿鲨」
+  uniDraw: /^由于(.+?)获得新的大学:\s*因此抓取了\s*(.+)$/,
   drawAnon: /^(.+?)从牌库中抓取(\d+)张(终局计分)?卡牌$/,
   insightDraw: /^(.+?)抓取了(\d+)张卡牌\((洞察力效果)\)$/,
   insightDiscard: /^洞察力效果:(.+?)\s*保留\s*(\d+)\s*张牌并丢弃\s*(\d+)\s*张牌$/,
@@ -88,6 +91,8 @@ const P = {
   gain: /^(.+?)获得(?:\s*(\d+))?\s*(?:\((.+?)\))?$/,
   actionSelected: /^(.+?)选择强度为\s*(\d+)\s*的行动卡牌\s*(.*)$/,
   actionPlaced: /^(.+?)将行动卡\s*放置在位置(\d+)/,
+  // 机灵等效果放置:图标替代了「行动卡」文字
+  actionPlacedEffect: /^(.+?)将\s*放置在位置(\d+)\((.+?)\)$/,
   actionSet: /^(.+?)将使用以下行动卡牌:(.+)$/,
   projectSupport: /^(.+?)支持了保护项目的第(?:[一二三四五]|[1-5])格:(.+)$/,
   timestamp: /^\d{1,2}:\d{2}$/,
@@ -115,14 +120,23 @@ const NOTES: RegExp[] = [
   /^(.+?)推进了\d+格休息标记并到达了尽头/,
   /^(.+?)\s*增加声望$/,
   /^(.+?)获得一个新的协会事务员$/,
-  /^(.+?)\s*拿取一个新的合作动物园$/,
+  /^(.+?)\s*拿取一个新的(合作动物园|大学)$/,
+  /^(.+?)触发其(.+?)能力$/, // 珊瑚礁等触发提示,不动牌
+  /^撤销到此步/, // 撤销链接(可能带时间戳尾巴)
+  /^(.+?)免费放置\s*一个(.+?)$/, // 免费放置独有建筑等,不涉及卡牌流
+  /^开始第(一|二|三)轮行动卡轮抽阶段/,
+  /^(.+?)\s*将使用地图\s*(\S+)\s*进行游戏/,
+  /^已根据(.+?)的喜好选择他们的颜色/,
+  /^你知道吗?/,
+  /^改变我的偏好/,
   /^(休息结束|开始一次新的休息|补充合作动物园和大学|将所有玩家的事务员返回他们的个人面板|移除所有玩家卡牌上的指示物)$/,
 ];
 
 export function parseLogLine(rawLine: string, me?: string): GameEvent | null {
   const trimmed = rawLine.trim();
   if (!trimmed) return null;
-  const text = normalizePunctuation(trimmed);
+  // innerText 会在图标等块级元素处产生换行,全部折叠成单个空格再匹配
+  const text = normalizePunctuation(trimmed).replace(/\s+/g, ' ').trim();
   if (P.timestamp.test(text)) return null;
 
   let m = text.match(P.insightDiscard);
@@ -168,6 +182,9 @@ export function parseLogLine(rawLine: string, me?: string): GameEvent | null {
   m = text.match(P.drawAnon);
   if (m) return { kind: 'drawAnonymous', player: normPlayer(m[1], me), count: Number(m[2]), deck: m[3] ? 'scoring' : 'main' };
 
+  m = text.match(P.uniDraw);
+  if (m) return { kind: 'draw', player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: 'main' };
+
   m = text.match(P.drawNamed);
   if (m) return { kind: 'draw', player: normPlayer(m[1], me), cards: resolveCards(splitNames(m[2])), deck: m[3] ? 'scoring' : 'main' };
 
@@ -207,6 +224,9 @@ export function parseLogLine(rawLine: string, me?: string): GameEvent | null {
   m = text.match(P.actionPlaced);
   if (m) return { kind: 'actionPlaced', player: normPlayer(m[1], me), slot: Number(m[2]) };
 
+  m = text.match(P.actionPlacedEffect);
+  if (m) return { kind: 'actionPlaced', player: normPlayer(m[1], me), slot: Number(m[2]) };
+
   m = text.match(P.actionSet);
   if (m) return { kind: 'actionSet', player: normPlayer(m[1], me), raw: m[2].trim() };
 
@@ -230,7 +250,13 @@ export function parseLogText(log: string, me?: string): GameEvent[] {
 
 /** 解析单条 DOM 日志条目:innerText 里的换行(BGA 会把数字拆行)先折叠成空格。 */
 export function parseLogEntry(entryText: string, me?: string): GameEvent | null {
-  return parseLogLine(entryText.replace(/\s+/g, ' '), me);
+  return parseLogLine(
+    entryText
+      .replace(/\s+/g, ' ')
+      // 条目尾部常带时间戳 div(innerText 会带出来),先剥掉再匹配
+      .replace(/\s+(\d{1,2}\/\d{2}\/\d{4}\s+)?\d{1,2}:\d{2}\s*$/, ''),
+    me,
+  );
 }
 
 /** 从事件流开头回放,重建某一时刻的卡牌流向状态。 */
