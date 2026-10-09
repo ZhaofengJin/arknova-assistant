@@ -1,6 +1,6 @@
 {
   "name": "arknova-assistant",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "BGA 方舟动物园记牌与打法建议助手(userscript,个人学习参考用)",
