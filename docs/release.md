@@ -6,8 +6,8 @@ Tampermonkey 通过 userscript 头部的 `@updateURL` / `@downloadURL` 定期检
 ## 发布步骤
 
 ```bash
-# 1. 改版本号(userscript 版本取自 package.json)
-npm version patch   # 或 minor / major
+# 1. 改版本号(userscript 版本取自 package.json);不自动提交或打 tag
+npm version patch --no-git-tag-version   # 或 minor / major
 
 # 2. 重新构建(dist/ 入库,是自动更新的载体)
 npm run build
@@ -15,7 +15,7 @@ npm run build
 # 3. 跑测试
 npm run test
 
-# 4. 提交并推送
+# 4. 将版本、锁文件和构建产物一起提交并推送
 git add -A
 git commit -m "release: v$(node -p require('./package.json').version)"
 git push origin main
